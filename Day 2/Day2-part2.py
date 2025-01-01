@@ -4,11 +4,11 @@ import os
 
 def is_safe_report(report):
     """
-    Check if a report is safe based on the given rules:
+    Check if a report is safe based on the given rules: 
     1. The levels are either all increasing or all decreasing.
     2. Adjacent levels differ by at least 1 and at most 3.
     """
-    diffs = [report[i+1] - report[i] for i in range(len(report) - 1)]
+    diffs = [report[i+1] - report[i] for i in range(len(report) - 1)]  
     
     # Check if all differences are within the allowed range
     if not all(1 <= abs(diff) <= 3 for diff in diffs):
