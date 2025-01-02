@@ -45,22 +45,32 @@ def is_update_valid(update, rules):
 
 def reorder_update(update, rules):
     """
-    Reorder an update based on the ordering rules.
+    Reorder a single update based on the ordering rules.
     """
     # Create a directed graph based on the ordering rules
     graph = defaultdict(list)
+
+    # In-degree tracks how many dependencies each page has (how many must precede it)
     in_degree = defaultdict(int)
+    
+     # Convert the update list to a set for quick lookups
     pages_in_update = set(update)
     
     for x, y in rules:
+        # Only consider rules where both x and y are in the current update
         if x in pages_in_update and y in pages_in_update:
-            graph[x].append(y)
-            in_degree[y] += 1
+            graph[x].append(y)   # Add a directed edge from x to y
+            in_degree[y] += 1   # Increment in-degree for y (dependency added)
     
-    # Topological Sort using Kahn's Algorithm
+    # Topological Sort using Kahn's Algorithm - ensures the ordering represents the dependencies
+    # Reference for Kahn's algorithm: https://www.geeksforgeeks.org/topological-sorting-indegree-based-solution/
+    # These are pages that don't depend on any other pages and can safely start the ordering.
+    # use a double-ended queue (dequeue) as need to pop from the left and append at the end.
     queue = deque([page for page in update if in_degree[page] == 0])
     sorted_update = []
     
+    # The algorithm works by repeatedly finding vertices with no incoming edges, removing them from the graph, and 
+    # updating the incoming edges of the remaining vertices. This process continues until all vertices have been ordered.
     while queue:
         node = queue.popleft()
         sorted_update.append(node)
